@@ -32,10 +32,10 @@ from torch.utils.data import DataLoader
 from transformers import get_linear_schedule_with_warmup
 
 # from model import Qwen2VLForConditionalGeneration
-from transformers import Qwen2VLProcessor
+# from transformers import Qwen2VLProcessor
 from model import Qwen2VLForConditionalGeneration
 # from transformers import Qwen2VLProcessor, Qwen2VLForConditionalGeneration
-# from model import Qwen2VLProcessor, Qwen2VLForConditionalGeneration
+from model import Qwen2VLProcessor, Qwen2VLForConditionalGeneration
 
 from datasets import load_from_disk
 from PIL import Image
@@ -44,6 +44,7 @@ from peft import PeftModel
 Image.MAX_IMAGE_PIXELS = None
 import random
 from accelerate import Accelerator
+from accelerate.utils import set_seed
 from tqdm import tqdm
 from datetime import datetime
 from peft import LoraConfig
@@ -59,9 +60,8 @@ from nltk.corpus import wordnet as wn
 _WORDNET_OK = True
 
 # ======================= 全局配置 =======================
-LR = 2e-5
-# MAX_STEPS = 2000
-MAX_ITER = 3
+LR = 2e-6
+MAX_ITER = 2
 NUM_GENERATIONS = 4        # G：每个 prompt 采样条数
 GRPO_STEPS = 3
 BETA_KL = 0.01             # KL 系数
@@ -77,14 +77,13 @@ lora_config = LoraConfig(
 
 # ======================= 懒加载 / 缓存 =======================
 _TAG_RE_CACHE = {}
+LOG_FILE = "./qwen_rl_log/log_file.txt"
 
 # ======================= Log =======================
-# PRINT_EVERY = 10
-# LOG_EVERY   = 10
-# SAVE_EVERY = 75
-SAVE_EVERY =150
+SAVE_EVERY = 50
 LOG_EVERY   = 3
-
+PRINT_EVERY = 1
+set_seed(42)
 def tanh(x):
     return 2 / (1 + np.exp(-2 * x)) - 1
 
@@ -198,7 +197,7 @@ def are_synonyms(word1:str, word2:str) -> bool:
                 best = sim
     return best >= 0.8
 
-def synonyms_degree(word1:str, word2:str) -> bool:
+def synonyms_degree(word1:str, word2:str):
     if not _WORDNET_OK:
         return False
     w1, w2 = _lemmatize(word1.lower()), _lemmatize(word2.lower())
@@ -213,9 +212,9 @@ def synonyms_degree(word1:str, word2:str) -> bool:
             sim = s1.path_similarity(s2)
             if sim is not None and sim > best:
                 best = sim
-    return best
+    return best if best < 0.8 else 1
 
-def is_correct(answer:str, gt:str) -> bool:
+def correctness(answer:str, gt:str):
     if answer is None:
         answer = ""
     answer = answer.strip().lower().rstrip('.')
@@ -314,7 +313,7 @@ def score_one(completion1:str, completion2:str, ground_truth:dict) -> float:
     cut = bool(ground_truth.get("cut", False))
 
     if not cut:
-        return 1, 0, 4 * is_correct(answer, answer_ref), 0, 5 * is_correct(answer, answer_ref)
+        return 1, 0, 4 * correctness(answer, answer_ref), 0, 4 * correctness(answer, answer_ref) + 1
 
     pattern_reward = 1.0 if (bbox is not None and answer and location) else 0.0
 
@@ -325,10 +324,11 @@ def score_one(completion1:str, completion2:str, ground_truth:dict) -> float:
         rx, ry = (bbox_ref[0] + bbox_ref[2]) / 2.0, (bbox_ref[1] + bbox_ref[3]) / 2.0
         distance = ((rx - cx) ** 2 + (ry - cy) ** 2) ** 0.5 + 1e-6
         bbox_iou = iou(bbox, bbox_ref)
+        # bbox_reward = float(bbox_iou + tanh(50.0 / distance))
         bbox_reward = float(bbox_iou + tanh(1.0 / distance))
 
     # answer reward
-    answer_reward = 1.0 if is_correct(answer, answer_ref) else 0.0
+    answer_reward = correctness(answer, answer_ref)
 
     # location reward
     loc_reward = 0.0
@@ -352,8 +352,11 @@ def chat(prompt, imgs, processor, accelerator, model, temperature):
         text=[prompt],
         images=imgs,
         return_tensors="pt",
-        padding="longest"
+        padding="longest",
+        text_pair=[""]
     ).to(accelerator.device)
+    if "labels" in inputs:
+        inputs.pop("labels")
 
     gen_ids = accelerator.unwrap_model(model).generate(
         **inputs,
@@ -372,7 +375,55 @@ def chat(prompt, imgs, processor, accelerator, model, temperature):
         skip_special_tokens=False
     ).strip()
 
-    return full_ids, prompt_len, output
+    return output
+
+def prepare_batch_ids(gt, completions1, completions2, imgs, processor, accelerator):
+    batch_ids = []
+    plens = []
+    cut = gt["cut"]
+    instruction = """
+Task:
+1. Global view – Give a one-sentence description of the entire scene.
+2. Reasoning focus – Decide which part of the image you must attend to in order to answer the question. Wrap the chosen keyword (pick exactly one from bottom-left, bottom-right, bottom-center, top-left, top-right, top-center, center-left, center-right, center) in the tag <location>...</location>.
+3. Answer box – Output the bounding box of that region as pixel coordinates in the form <bbox>[x1,y1,x2,y2]</bbox>. Use integers, no spaces.
+4. Post-crop analysis - After cropping to the box in step 3, examine that patch and write a brief statement explaining the visual evidence that supports your answer.
+5. Answer - your answer. In the tag <answer>...</answer>
+
+Rules:
+- Return exactly one <location> tag and one <bbox> tag; nothing else after them.
+- If unsure, pick the most probable location and best-guess box—never say you are uncertain.
+"""
+    cur_prompt = gt["question"].split("Answer the question using a single word or phrase.")[0]
+    prompt =  "<|image_pad|> \n" + cur_prompt + instruction
+
+    for i in range(len(completions1)):
+        completion = prompt
+        if cut:
+            completion += completions1[i].split("<answer>")[0] + "<|image_pad|>"+ completions2[i]
+        else:
+            completion += completions1[i]
+        prompt_ids = processor(
+            text=prompt,
+            images=imgs[i],
+            return_tensors="pt",
+            padding="longest",
+            text_pair=[""]
+        )
+        if "labels" in prompt_ids:
+            prompt_ids.pop("labels")
+        plen = prompt_ids["input_ids"].shape[-1]
+        ids = processor(
+            text=completion,
+            images=imgs[i],
+            return_tensors="pt",
+            padding="longest",
+            text_pair=[""]
+        ).to(accelerator.device)
+        if "labels" in ids:
+            ids.pop("labels")
+        batch_ids.append(ids)
+        plens.append(plen)
+    return batch_ids, plens
 
 @torch.no_grad()
 def generate_completion_vl_single(gt, processor, accelerator, model, temperature):
@@ -391,14 +442,18 @@ Rules:
 """
     image_fp = "./image/"+gt["image_name"].split("/")[-1]
     scale = gt["scale"]
+    cut = gt["cut"]
     cur_prompt = gt["question"].split("Answer the question using a single word or phrase.")[0]
 
     # stage 1: Question + Image (downsampled)
     img = Image.open(image_fp).convert("RGB")
     img = resize_image(img)
 
-    prompt =  "<|image_pad|>\n" + cur_prompt + instruction
-    ids1, plen1, output1 = chat(prompt, [img], processor, accelerator, model, temperature)
+    prompt =  "<|image_pad|> \n" + cur_prompt + instruction
+    output1 = chat(prompt, [img], processor, accelerator, model, temperature)
+    
+    if not cut:
+        return output1, "", [img]
 
     # stage 2: Question + Image (downsampled) + previous reasoning + Image (cropped)
     prompt =  prompt + output1.split("<answer>")[0] + "<|image_pad|>"
@@ -411,68 +466,68 @@ Rules:
     image_bbox = cut_image(image_bbox, bbox)
     image_bbox = resize_image(image_bbox)
 
-    ids2, plen2, out2 = chat(prompt, [img, image_bbox], processor, accelerator, model, temperature)
-    vision_kwargs = make_vision_kwargs([img, image_bbox], processor, accelerator.device)
-    return ids2, plen2, output1, out2, vision_kwargs
+    out2 = chat(prompt, [img, image_bbox], processor, accelerator, model, temperature)
+    return output1, out2, [img, image_bbox]
 
 @torch.no_grad()
 def generate_completion_vl(gt, processor, accelerator, model, G):
-    temp_center = 0.1  # 中心温度
-    temp_range = 0.05  # 波动幅度
+    temp_center = 0.5  # 中心温度
+    temp_range = 0.25  # 波动幅度
 
-    ids_list = []
-    plen_list = []
     out2_list = []
     out1_list = []
-    vision_kwargs = None
+    images = []
     for i in range(G):
         temp = temp_center + random.uniform(-temp_range, temp_range)
         temp = max(0.0, temp)  # 确保非负
-        ids, plen, out1, out2, vk = generate_completion_vl_single(gt, processor, accelerator, model, temperature=temp)
-        ids_list.append(ids)
-        plen_list.append(plen)
+        out1, out2, imgs = generate_completion_vl_single(gt, processor, accelerator, model, temperature=temp)
         out1_list.append(out1)
         out2_list.append(out2)
-        if vision_kwargs is None:
-            vision_kwargs = vk
-    return ids_list, plen_list, out1_list, out2_list, vision_kwargs
+        images.append(imgs)
+
+    # def stack_vision_kwarg(list_of_vks):
+    #     keys = list_of_vks[0].keys()
+    #     stacked = {}
+    #     for k in keys:
+    #         # 给每个 vk[k] 加 batch 维度
+    #         tensors = [vk[k].unsqueeze(0) for vk in list_of_vks]  # shape [1, ...]
+    #         stacked[k] = torch.cat(tensors, dim=0)  # [G, ...]
+    #     return stacked
+
+    # vision_kwargs = stack_vision_kwarg(vision_list)
+    # vision_kwargs["image_grid_thw"] = vision_kwargs["image_grid_thw"].reshape(-1, 3)
+    batch_ids, plens = prepare_batch_ids(gt, out1_list, out2_list, images, processor, accelerator)
+    return batch_ids, plens, out1_list, out2_list
 
 
 # ============== Log p 序列概率（批处理，支持反向） ==============
 
-def _pack_batch(batch_ids:List[torch.Tensor], pad_id:int, device:str):
-    lens = [int(x.numel()) for x in batch_ids]
-    B = len(batch_ids)
-    T = max(lens)
-    x = torch.full((B, T), pad_id, dtype=torch.long, device=device)
-    mask = torch.zeros((B, T), dtype=torch.long, device=device)
-    for i, ids in enumerate(batch_ids):
-        L = lens[i]
-        x[i, :L] = ids.to(device)
-        mask[i, :L] = 1
-    return x, mask, lens
+# def _pack_batch(batch_ids:List[torch.Tensor], pad_id:int, device:str):
+#     lens = [int(x.numel()) for x in batch_ids]
+#     B = len(batch_ids)
+#     T = max(lens)
+#     x = torch.full((B, T), pad_id, dtype=torch.long, device=device)
+#     mask = torch.zeros((B, T), dtype=torch.long, device=device)
+#     for i, ids in enumerate(batch_ids):
+#         L = lens[i]
+#         x[i, :L] = ids.to(device)
+#         mask[i, :L] = 1
+#     return x, mask, lens
 
-# def batch_seq_logprobs_vl(model, batch_ids:List[torch.Tensor], prompt_lens:List[int], pad_id:int, device:str, no_grad:bool, vision_kwargs:dict) -> torch.Tensor:
+# def batch_seq_logprobs_vl(model, batch_ids, prompt_lens, pad_id, device, no_grad, vision_kwargs):
+#     num_text = len(batch_ids)  # 比如 G=4，4个sample
+#     # 直接把视觉特征沿 batch 维度 repeat num_text 次
+#     vision_kwargs = {
+#         k: v.repeat(num_text, *([1] * (v.ndim - 1))) for k, v in vision_kwargs.items()
+#     }
+#     # print(f"[DEBUG] vision_kwargs expanded to:")
+#     # for k, v in vision_kwargs.items():
+#     #     print(f"  {k}: {v.shape}")
+
 #     ctx = torch.no_grad() if no_grad else torch.enable_grad()
 #     with ctx:
 #         x, mask, lens = _pack_batch(batch_ids, pad_id, device)
-
-#         num_text = len(batch_ids)       # 文本 batch 大小
-#         num_img = vision_kwargs["pixel_values"].shape[0]  # 原图像数量
-
-#         if num_text > num_img:
-#             repeat_factor = num_text // num_img
-#             # repeat_interleave 更清晰：第0维复制 repeat_factor 次
-            
-#             vision_kwargs = {
-#                 k: v.repeat_interleave(repeat_factor, dim=0)
-#                 for k, v in vision_kwargs.items()
-#             }
-#             print("num_text:", num_text, "num_img:", num_img)
-#             print("repeat_factor:", repeat_factor)
-#             for k, v in vision_kwargs.items():
-#                 print(f"{k}.shape after repeat: {v.shape}")
-
+#         # print(f"[DEBUG] x.shape={x.shape}, mask.shape={mask.shape}")
 
 #         out = model(input_ids=x, attention_mask=mask, **vision_kwargs)
 #         logits = out.logits[:, :-1, :]
@@ -481,7 +536,7 @@ def _pack_batch(batch_ids:List[torch.Tensor], pad_id:int, device:str):
 
 #         logp = torch.log_softmax(logits, dim=-1)
 #         tok_lp = logp.gather(-1, labels.unsqueeze(-1)).squeeze(-1)
-        
+
 #         Bsz, Tm1 = labels.shape
 #         pos = torch.arange(Tm1, device=device).unsqueeze(0).expand(Bsz, -1)
 #         pl = torch.as_tensor(prompt_lens, device=device).unsqueeze(1)
@@ -490,61 +545,11 @@ def _pack_batch(batch_ids:List[torch.Tensor], pad_id:int, device:str):
 #         seq_logp = (tok_lp * final_mask).sum(dim=1)
 #     return seq_logp
 
-def batch_seq_logprobs_vl(model, batch_ids, prompt_lens, pad_id, device, no_grad, vision_kwargs):
-    num_text = len(batch_ids)  # 比如 G=4，4个sample
-    # 直接把视觉特征沿 batch 维度 repeat num_text 次
-    vision_kwargs = {
-        k: v.repeat(num_text, *([1] * (v.ndim - 1))) for k, v in vision_kwargs.items()
-    }
-    # print(f"[DEBUG] vision_kwargs expanded to:")
-    # for k, v in vision_kwargs.items():
-    #     print(f"  {k}: {v.shape}")
-
-    ctx = torch.no_grad() if no_grad else torch.enable_grad()
-    with ctx:
-        x, mask, lens = _pack_batch(batch_ids, pad_id, device)
-        # print(f"[DEBUG] x.shape={x.shape}, mask.shape={mask.shape}")
-
-        out = model(input_ids=x, attention_mask=mask, **vision_kwargs)
-        logits = out.logits[:, :-1, :]
-        labels = x[:, 1:]
-        valid = mask[:, 1:].bool()
-
-        logp = torch.log_softmax(logits, dim=-1)
-        tok_lp = logp.gather(-1, labels.unsqueeze(-1)).squeeze(-1)
-
-        Bsz, Tm1 = labels.shape
-        pos = torch.arange(Tm1, device=device).unsqueeze(0).expand(Bsz, -1)
-        pl = torch.as_tensor(prompt_lens, device=device).unsqueeze(1)
-        gen_mask = pos >= (pl - 1)
-        final_mask = valid & gen_mask & (labels != pad_id)
-        seq_logp = (tok_lp * final_mask).sum(dim=1)
-    return seq_logp
-
-# def batch_seq_logprobs_vl(model, batch_ids, prompt_lens, pad_id, device, no_grad, vision_kwargs):
-#     # 把视觉特征搬到计算设备
-#     vision_kwargs = {
-#         k: (v.to(device) if isinstance(v, torch.Tensor) else v)
-#         for k, v in vision_kwargs.items()
-#     }
-
-#     # repeat 视觉特征
-#     num_text = len(batch_ids)  # 比如 G=4
-#     vision_kwargs = {
-#         k: v.repeat(num_text, *([1] * (v.ndim - 1)))
-#         for k, v in vision_kwargs.items()
-#     }
-#     print(f"[DEBUG] vision_kwargs expanded to:")
-#     for k, v in vision_kwargs.items():
-#         print(f"  {k}: {v.shape} @ {v.device}")
-
-#     # 把文本 token 搬到计算设备
-#     batch_ids = [t.to(device) for t in batch_ids]
-
+# def batch_seq_logprobs_vl(model, batch_ids, prompt_lens, pad_id, image_id, device, no_grad, vision_kwargs):
 #     ctx = torch.no_grad() if no_grad else torch.enable_grad()
 #     with ctx:
 #         x, mask, lens = _pack_batch(batch_ids, pad_id, device)
-#         print(f"[DEBUG] x.shape={x.shape}, mask.shape={mask.shape}")
+#         # print(f"[DEBUG] x.shape={x.shape}, mask.shape={mask.shape}")
 
 #         out = model(input_ids=x, attention_mask=mask, **vision_kwargs)
 #         logits = out.logits[:, :-1, :]
@@ -558,11 +563,60 @@ def batch_seq_logprobs_vl(model, batch_ids, prompt_lens, pad_id, device, no_grad
 #         pos = torch.arange(Tm1, device=device).unsqueeze(0).expand(Bsz, -1)
 #         pl = torch.as_tensor(prompt_lens, device=device).unsqueeze(1)
 #         gen_mask = pos >= (pl - 1)
-#         final_mask = valid & gen_mask & (labels != pad_id)
+#         final_mask = valid & gen_mask & (labels != pad_id) & (labels != image_id)
 #         seq_logp = (tok_lp * final_mask).sum(dim=1)
+#     return seq_logp
 
-#     # 计算完后搬回 CPU，节省显存
-#     return seq_logp.cpu()
+import torch
+
+def batch_seq_logprobs_vl(model, batchs, prompt_lens, pad_id, image_id, device, no_grad=True):
+    """
+    Args:
+        model: 模型
+        batchs: 一个 batch 列表，每个元素是 dict (包含 input_ids, attention_mask 等)
+        prompt_lens: list，记录每个 batch 的 prompt 长度
+        pad_id: pad token id
+        image_id: image token id
+        device: torch.device
+        no_grad: 是否禁用梯度
+    Returns:
+        list[Tensor]，每个 batch 的序列 log prob
+    """
+    ctx = torch.no_grad() if no_grad else torch.enable_grad()
+    all_seq_logps = []
+
+    with ctx:
+        for i, batch in enumerate(batchs):
+            # forward pass
+            out = model(**batch)
+            logits = out.logits[:, :-1, :]                # [B, T-1, V]
+            labels = batch["input_ids"][:, 1:]            # [B, T-1]
+            valid  = batch["attention_mask"][:, 1:].bool()# [B, T-1]
+
+            # log probs
+            logp = torch.log_softmax(logits, dim=-1)
+            tok_lp = logp.gather(-1, labels.unsqueeze(-1)).squeeze(-1)  # [B, T-1]
+
+            # build mask
+            Bsz, Tm1 = labels.shape
+            pos = torch.arange(Tm1, device=device).unsqueeze(0).expand(Bsz, -1)
+
+            pl_i = prompt_lens[i]
+            if isinstance(pl_i, int):  # batch_size=1 的情况
+                pl = torch.full((Bsz, 1), pl_i, device=device)  # [B,1]
+            else:  # batch_size>1 的情况
+                pl = torch.as_tensor(pl_i, device=device).unsqueeze(1)  # [B,1]
+
+            gen_mask = pos >= (pl - 1)
+            final_mask = valid & gen_mask & (labels != pad_id) & (labels != image_id)
+
+            # sequence log prob per sample
+            seq_logp = (tok_lp * final_mask).sum(dim=1)   # [B]
+            all_seq_logps.append(seq_logp)
+
+    return all_seq_logps
+
+
 
 def save_lora_adapter(accelerator, model, path):
     unwrapped_model = accelerator.unwrap_model(model)
@@ -609,7 +663,6 @@ def load_lora_weights(base_model, lora_state_dict, device, lora_config):
     base_model.load_state_dict(lora_state_dict, strict=False)
     base_model = base_model.to(device)
     set_lora_trainable(base_model, lora_config)
-    return base_model
 
 def extract_lora_state_dict(model, lora_config):
     """
@@ -646,6 +699,9 @@ def main():
         },
     )
 
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now().strftime('%Y-%m-%d %H-%M-%S')}\n")
+
     running_loss = torch.zeros((), device=accelerator.device)
     running_count = 0
 
@@ -659,6 +715,10 @@ def main():
     base_model = PeftModel.from_pretrained(
         base_model, "./output_2/checkpoint-830", torch_dtype=torch.float16
     )
+
+    # base_model = PeftModel.from_pretrained(
+    #     base_model, "./output_rl/checkpoint-75", torch_dtype=torch.float16
+    # )
 
     # 参考策略：拷贝 θ 的当前权重，并冻结
     theta_adapter = extract_lora_state_dict(base_model, lora_config)
@@ -696,15 +756,24 @@ def main():
     # print(f"加载模型用时: {time.time() - prev_time} s")
     prev_time = time.time()
     # ==== 3) 训练循环 ====
+    # global_step = 0
     global_step = 0
+    # for i in range(global_step):
+    #     pbar.update(1)
+    # cnt = 0
     for iter in range(MAX_ITER):
-        for example in dl: 
+        for example in dl:
+                # if cnt <= 7:
+                #     cnt+=1
+            # else:
+            #     print(example)
+            #     break
             try:
                 # ---- 采样：每个样本重复 G 次（组内比较）----
                 with torch.no_grad():
-                    theta = load_lora_weights(base_model, theta_adapter, accelerator.device, lora_config)
-                    batch_ids, prompt_lens, completions1, completions2, vision_kwargs = generate_completion_vl(
-                        example, processor, accelerator, theta, NUM_GENERATIONS
+                    load_lora_weights(base_model, theta_adapter, accelerator.device, lora_config)
+                    batch_ids, prompt_lens, completions1, completions2 = generate_completion_vl(
+                        example, processor, accelerator, base_model, NUM_GENERATIONS
                     )
                 # print(f"采样用时: {time.time() - prev_time} s")
                 prev_time = time.time()
@@ -720,7 +789,13 @@ def main():
                     answer_rewards.append(answer_reward)
                     loc_rewards.append(loc_reward)
                     rewards.append(reward)
-
+                # with open(LOG_FILE, "a", encoding="utf-8") as f:
+                #     f.write(f"rewards: {rewards}\n")
+                #     f.write(f"pattern_rewards: {pattern_rewards}\n")
+                #     f.write(f"bbox_rewards: {bbox_rewards}\n")
+                #     f.write(f"answer_rewards: {answer_rewards}\n")
+                #     f.write(f"loc_rewards: {loc_rewards}\n")
+                    
                 rewards = torch.tensor(rewards, device=accelerator.device, dtype=torch.float32)
                 pattern_rewards = torch.tensor(pattern_rewards, device=accelerator.device, dtype=torch.float32)
                 bbox_rewards = torch.tensor(bbox_rewards, device=accelerator.device, dtype=torch.float32)
@@ -733,8 +808,13 @@ def main():
                 loc_reward_mean = loc_rewards.mean()
 
                 reward_mean = rewards.mean()
-                reward_std  = rewards.std(unbiased=False)
-                adv = (rewards - reward_mean) / (reward_std + 1e-8)
+                # reward_std  = rewards.std(unbiased=False)
+
+                reward_diff = rewards - reward_mean
+                
+                if torch.allclose(reward_diff, torch.zeros_like(reward_diff), atol=1e-8):
+                    rewards[0] += 0.1
+                adv = (rewards- rewards.mean()) / (rewards.std(unbiased=False) + 1e-6)
                 
                 tok = processor.tokenizer
                 pad_id_eff = tok.pad_token_id
@@ -744,16 +824,16 @@ def main():
 
                 # ---- 缓存 old 对数似然（采样时刻的 θ，与 Ref）----
                 with torch.no_grad():
-                    old = load_lora_weights(base_model, old_adapter, accelerator.device, lora_config)
+                    load_lora_weights(base_model, old_adapter, accelerator.device, lora_config)
                     logp_old = batch_seq_logprobs_vl(
-                        old, batch_ids, prompt_lens, pad_id_eff, accelerator.device, no_grad=True, vision_kwargs=vision_kwargs
+                        base_model, batch_ids, prompt_lens, pad_id_eff, processor.image_token_id, accelerator.device, no_grad=True
                     )
                     torch.cuda.empty_cache()
                     # print("\n\nstage1 done!\n\n")
 
-                    ref = load_lora_weights(base_model, ref_adapter, accelerator.device, lora_config)
+                    load_lora_weights(base_model, ref_adapter, accelerator.device, lora_config)
                     logp_ref = batch_seq_logprobs_vl(
-                        ref, batch_ids, prompt_lens, pad_id_eff, accelerator.device, no_grad=True, vision_kwargs=vision_kwargs
+                        base_model, batch_ids, prompt_lens, pad_id_eff, processor.image_token_id, accelerator.device, no_grad=True
                     )
                     torch.cuda.empty_cache()
                     # print("\n\nstage2 done!\n\n")
@@ -761,16 +841,15 @@ def main():
                 prev_time = time.time()
 
                 # ---- 内循环 K 次（重复反向，提高样本利用率）----
-                theta = load_lora_weights(base_model, theta_adapter, accelerator.device, lora_config)
-                theta.train()
+                load_lora_weights(base_model, theta_adapter, accelerator.device, lora_config)
+                base_model.train()
                 for _ in range(GRPO_STEPS):
                     for i in range(NUM_GENERATIONS):
-                        with accelerator.accumulate(theta):  
+                        with accelerator.accumulate(base_model):  
 
                             logp_theta = batch_seq_logprobs_vl(
-                                theta, [batch_ids[i]], prompt_lens, pad_id_eff, accelerator.device, no_grad=False, vision_kwargs=vision_kwargs
+                                base_model, [batch_ids[i]], [prompt_lens[i]], pad_id_eff, processor.image_token_id, accelerator.device, no_grad=False
                             )
-
                             # ratio = torch.exp(logp_theta - logp_old[i])
                             # policy_loss = -(ratio * adv[i]).mean()
                             # approx_kl = (logp_theta - logp_ref[i])
@@ -779,18 +858,28 @@ def main():
                             # # kl_loss = BETA_KL * approx_kl
                             # loss = - (policy_loss - BETA_KL * kl_loss).mean()
 
+                            # # online solution
+                            # ratio = torch.exp(logp_theta - logp_old[i])
+                            # clipped_ratio = torch.clamp(ratio, 1 - EPSILON, 1 + EPSILON)
+                            # policy_loss = -torch.min(ratio * adv[i], clipped_ratio * adv[i]).mean()
+                            # ratio_kl = torch.exp(logp_ref[i] - logp_theta)
+                            # kl_penalty = (ratio_kl - torch.log(ratio_kl) - 1).mean()
+                            # loss = policy_loss + BETA_KL * kl_penalty
+                            
                             # online solution
-                            ratio = torch.exp(logp_theta - logp_old[i])
+                            ratio = torch.exp(logp_theta[0] - logp_old[i])
                             clipped_ratio = torch.clamp(ratio, 1 - EPSILON, 1 + EPSILON)
                             policy_loss = -torch.min(ratio * adv[i], clipped_ratio * adv[i]).mean()
-                            ratio_kl = torch.exp(logp_ref[i] - logp_theta)
+                            ratio_kl = torch.exp(logp_ref[i] - logp_theta[0])
                             kl_penalty = (ratio_kl - torch.log(ratio_kl) - 1).mean()
                             loss = policy_loss + BETA_KL * kl_penalty
-
+                            # with open(LOG_FILE, "a", encoding="utf-8") as f:    
+                            #     f.write(f"loss: {loss}, rewards: {adv}\n ratio: {ratio}, policy loss: {policy_loss}\n kl penalty: {kl_penalty}, ratio kl: {ratio_kl}, logp ref: {logp_ref[i]}, logp theta: {logp_theta[0]}, logp old: {logp_old[i]}")
+                            # debug                            
                             accelerator.backward(loss)
 
                             if accelerator.sync_gradients:
-                                grad_norm = accelerator.clip_grad_norm_(theta.parameters(), 1.0)  # ← 用 accelerator 的裁剪以兼容分布式/张量并行
+                                grad_norm = accelerator.clip_grad_norm_(base_model.parameters(), 1.0)  # ← 用 accelerator 的裁剪以兼容分布式/张量并行
                             optim.step()
                             sched.step()
                             optim.zero_grad(set_to_none=True)
@@ -805,19 +894,6 @@ def main():
                             # 2) 累加 running loss（用于 log 的滑动均值）
                             running_loss += loss.detach()
                             running_count += 1
-
-                            # # 3) 打印（轻量）
-                            # if global_step % PRINT_EVERY == 0:
-                            #     gnorm = grad_norm.detach().item() if isinstance(grad_norm, torch.Tensor) else float(grad_norm)
-                            #     mean_loss_world = (accelerator.gather(running_loss).sum().item() /
-                            #                     max(1, accelerator.num_processes) / max(1, running_count))
-                                
-                            #     accelerator.print(
-                            #         f"[step {global_step}] "
-                            #         f"loss={mean_loss_world}  policy={policy_loss.detach().float().mean().item()}  kl={approx_kl.detach().float().item()}  "
-                            #         f"R_mean={reward_mean:.3f}  R_std={reward_std:.3f}  "
-                            #         f"lr={sched.get_last_lr()[0]:.2e}"
-                            #     )
 
                             # 4) 记录到 tracker（重一点）
                             if global_step % LOG_EVERY == 0:
@@ -863,29 +939,45 @@ def main():
                                     },
                                     step=global_step,
                                 )
+                                # with open(LOG_FILE, "a", encoding="utf-8") as f:
+                                    # accelerator.print(
+                                    #     f"[step {global_step}] "
+                                    #     f"loss={mean_loss_world}"
+                                    #     f"Reward={reward}"
+                                    #     f"R_mean={reward_mean_world:.3f}"
+                                    #     f"lr={sched.get_last_lr()[0]:.2e}\n",
+                                    #     file=f
+                                    # )
+                                
+
                                 running_loss.zero_()
                                 running_count = 0
                                 accelerator.wait_for_everyone()
 
                             # 5) 可选：周期性保存
                             if global_step % SAVE_EVERY == 0 and accelerator.is_main_process:
-                                save_checkpoint(accelerator, theta, iter, global_step, loss.item())
-                    theta_adapter = extract_lora_state_dict(theta, lora_config)
-                # print(f"内循环用时: {time.time() - prev_time} s")
-                prev_time = time.time()
-                old_adapter = extract_lora_state_dict(theta, lora_config)
+                                save_checkpoint(accelerator, base_model, iter, global_step, loss.item())
+                    theta_adapter = extract_lora_state_dict(base_model, lora_config)
+                    prev_time = time.time()
+                    old_adapter = extract_lora_state_dict(base_model, lora_config)
+                # if cnt < 22:
+                #     cnt+=1
+                # else:
+                #     save_checkpoint(accelerator, theta, iter, global_step, loss.item())
             except Exception as e:
-                print(f"error: {e}")
-                continue
-        ref_adapter = extract_lora_state_dict(theta, lora_config)
+                with open(LOG_FILE, "a", encoding="utf-8") as f:
+                    f.write(f"error: {e}")
+                End('liurx2-0')
+                
+        ref_adapter = extract_lora_state_dict(base_model, lora_config)
 
     # ==== 4) 保存 ====
     if accelerator.is_main_process:
-        save_checkpoint(accelerator, theta, iter, global_step, loss.item())
+        save_checkpoint(accelerator, base_model, iter, global_step, loss.item())
     print("Done.")
 
 
 if __name__ == "__main__":
     main()
-    End('liurx1-0')
+    End('liurx2-0')
     
