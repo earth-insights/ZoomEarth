@@ -1,0 +1,55 @@
+{
+  "citation": "",
+  "description": "",
+  "features": {
+    "question_id": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "image_name": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "category": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "question": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "ground_truth": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "cut": {
+      "dtype": "bool",
+      "_type": "Value"
+    },
+    "global": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "stage_1_reasoning": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "stage_2_reasoning": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "bbox": {
+      "feature": {
+        "dtype": "int64",
+        "_type": "Value"
+      },
+      "_type": "List"
+    },
+    "scale": {
+      "dtype": "float64",
+      "_type": "Value"
+    }
+  },
+  "homepage": "",
+  "license": ""
+}
