@@ -4,40 +4,220 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SegEarth-OV: Paper Title</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fafafa;
+            color: #333;
+            line-height: 1.6;
+        }
+        /* 导航栏 */
+        nav {
+            position: fixed;
+            width: 100%;
+            background: #ffffffcc;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+        .logo {
+            font-weight: bold;
+            font-size: 20px;
+            color: #007acc;
+            text-decoration: none;
+        }
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #007acc;
+        }
+        /* 汉堡菜单按钮 */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            transition: all 0.3s;
+        }
+        /* Hero 区 */
+        .hero {
+            background: linear-gradient(to right, #007acc, #00b4d8);
+            color: white;
+            padding: 100px 20px;
+            text-align: center;
+        }
+        .hero h1 {
+            margin: 0;
+            font-size: 48px;
+        }
+        .subtitle {
+            font-size: 20px;
+            margin-top: 10px;
+        }
+        .authors {
+            margin-top: 10px;
+        }
+        .links .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: white;
+            color: #007acc;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .links .btn:hover {
+            background: #f0f0f0;
+        }
+        /* 图片区域 */
+        .teaser img {
+            display: block;
+            margin: 40px auto;
+            max-width: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        /* 内容区 */
+        section {
+            max-width: 900px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+        h2 {
+            border-bottom: 2px solid #007acc;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        /* 视频自适应 */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* BibTeX 区 */
+        pre {
+            background: #eee;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #f0f0f0;
+            font-size: 14px;
+        }
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background: white;
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px;
+                display: none;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .menu-toggle {
+                display: flex;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-    <h1>ZoomEarth</h1>
-    <p>Paper Title Goes Here</p>
-    <p><strong>Author1</strong>, Author2, Author3</p>
-    <p><a href="https://arxiv.org">[Paper]</a> 
-       <a href="https://github.com">[Code]</a></p>
+<!-- 导航栏 -->
+<nav>
+    <div class="nav-container">
+        <a href="#home" class="logo">SegEarth-OV</a>
+        <ul class="nav-links">
+            <li><a href="#abstract">Abstract</a></li>
+            <li><a href="#video">Video</a></li>
+            <li><a href="#bibtex">BibTeX</a></li>
+        </ul>
+        <div class="menu-toggle" id="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero 区 -->
+<header id="home" class="hero">
+    <h1>SegEarth-OV</h1>
+    <p class="subtitle">Paper Title Goes Here</p>
+    <p class="authors"><strong>Author1</strong>, Author2, Author3</p>
+    <p class="links">
+        <a href="https://arxiv.org/abs/xxxx.xxxxx" class="btn">Paper</a>
+        <a href="https://github.com/likyoo/SegEarth-OV" class="btn">Code</a>
+    </p>
 </header>
 
+<!-- 封面图 -->
 <section class="teaser">
     <img src="images/teaser.png" alt="Teaser Image">
 </section>
 
-<section class="abstract">
+<!-- Abstract -->
+<section id="abstract">
     <h2>Abstract</h2>
     <p>
         This is where your abstract goes. Briefly describe your work, the problem you solve, and your main contributions.
     </p>
 </section>
 
-<section class="video">
+<!-- Video -->
+<section id="video">
     <h2>Video</h2>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/XXXXXXX" 
-            frameborder="0" allowfullscreen></iframe>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/XXXXXXX" frameborder="0" allowfullscreen></iframe>
+    </div>
 </section>
 
-<section class="bibtex">
+<!-- BibTeX -->
+<section id="bibtex">
     <h2>BibTeX</h2>
 <pre>
 @article{your2025paper,
-  title={ZoomEarth: Paper Title},
+  title={SegEarth-OV: Paper Title},
   author={Author1 and Author2 and Author3},
   journal={arXiv preprint arXiv:xxxx.xxxxx},
   year={2025}
@@ -45,9 +225,20 @@
 </pre>
 </section>
 
+<!-- 页脚 -->
 <footer>
     <p>© 2025 Your Name</p>
 </footer>
+
+<!-- JS: 汉堡菜单功能 -->
+<script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+</script>
 
 </body>
 </html>
