@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #fafafa;
+    color: #333;
+}
+
+header {
+    text-align: center;
+    padding: 30px;
+    background: #f0f0f0;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #007acc;
+}
+
+.teaser img {
+    display: block;
+    margin: 20px auto;
+    max-width: 90%;
+}
+
+section {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+pre {
+    background: #eee;
+    padding: 10px;
+    overflow-x: auto;
+}
