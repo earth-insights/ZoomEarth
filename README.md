@@ -1,12 +1,10 @@
 <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    <img src="./icon.png" alt="ZoomEarth Icon" width="50" height="50" style="object-fit: contain; vertical-align: middle;"/>
+    <img src="./icon.png" alt="ZoomEarth Icon" width="25" height="25" style="object-fit: contain; vertical-align: middle;"/>
     ZoomEarth
   </h1>
   <p>A Multimodal Visual Question Answering Dataset for Remote Sensing Imagery</p>
 </div>
-
----
 
 ## 🚀 Overview
 
