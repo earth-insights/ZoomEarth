@@ -1,0 +1,22 @@
+#!/bin/bash
+python src/SFT.py \
+    --model_name "Qwen/Qwen2.5-VL-3B-Instruct" \
+    --dataset_name_train "DATASET_PTH/sft" \
+    --dataset_name_val "DATASET_PTH/test" \
+    --output_dir "OUT_DIR" \
+    --img_folder "IMAGE_FOLDER" \
+    --wandb_project "" \
+    --num_train_epochs 3 \
+    --batch_size_per_gpu 1 \
+    --gradient_accumulation_steps 4 \
+    --lr 3e-5 \
+    --lora_r 8 \
+    --warmup_steps 500 \
+    --weight_decay 0.01 \
+    --max_grad_norm 1.0 \
+    --seed 42 \
+    --dtype "bfloat16" \
+    --save_steps 100 \
+    --log_steps 10 \
+    --print_steps 20 \
+    --max_pixels $((64*64*28*28))

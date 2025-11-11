@@ -1,0 +1,40 @@
+# === Core dependencies (from open-r1 setup.py) ===
+accelerate>=1.2.1
+bitsandbytes>=0.43.0
+datasets>=3.2.0
+deepspeed==0.15.4
+einops>=0.8.0
+hf_transfer>=0.1.4
+huggingface-hub[cli]>=0.19.2,<1.0
+liger_kernel==0.5.2
+packaging>=23.0
+safetensors>=0.3.3
+sentencepiece>=0.1.99
+torch>=2.5.1
+transformers==4.49.0
+trl==0.17.0
+
+# === Development / Evaluation tools (extras_require["dev"]) ===
+black>=24.4.2
+isort>=5.12.0
+flake8>=6.0.0
+pytest
+parameterized>=0.9.0
+math-verify
+vllm==0.6.6.post1
+wandb>=0.19.1
+pillow
+
+# === Additional manual installs ===
+wandb==0.18.3
+tensorboardx
+qwen_vl_utils
+torchvision
+flash-attn --no-build-isolation
+babel
+python-Levenshtein
+matplotlib
+pycocotools
+openai
+httpx[socks]
+nltk

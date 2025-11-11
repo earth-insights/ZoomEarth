@@ -20,7 +20,7 @@ echo "image_folders: $image_folders"
 
 export EXP_NAME="LRS_GRO" # TODO: change this to your own experiment name
 TASK_TYPE="LRS_GRO"
-cd ${REPO_HOME}/src/open-r1-multimodal
+cd ${REPO_HOME}/src/train/RL/src/open-r1-multimodal
 
 export DEBUG_MODE="true" # Enable Debug if you want to see the rollout of model during RL
 # create the run directory and log file
