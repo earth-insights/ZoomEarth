@@ -3,7 +3,7 @@
     <img src="./icon.png" alt="ZoomEarth Icon" width="25" height="25" style="object-fit: contain; vertical-align: middle;"/>
     ZoomEarth
   </h1>
-  <p>A Multimodal Visual Question Answering Dataset for Remote Sensing Imagery</p>
+  <p>A Vsion Language Model Designed For Tasks On Ultra-High-Resolution Remote Sensing Imagery</p>
 </div>
 
 ## 🔥🔥🔥 ZoomEarth
