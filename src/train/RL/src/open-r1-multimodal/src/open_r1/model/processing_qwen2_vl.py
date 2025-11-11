@@ -163,7 +163,7 @@ class Qwen2VLProcessor(ProcessorMixin):
                     index += 1
                 text[i] = text[i].replace("<|placeholder|>", self.image_token)
 
-            for i in range(len(output_kwargs["text_kwargs"]['text_pair'])):   # 把A中的图片标记替换成标志位
+            for i in range(len(output_kwargs["text_kwargs"]['text_pair'])):
                 while self.image_token in output_kwargs["text_kwargs"]['text_pair'][i]:  #<image>
                     num_image_tokens = image_grid_thw[index].prod() // merge_length  
                     output_kwargs["text_kwargs"]['text_pair'][i] = output_kwargs["text_kwargs"]['text_pair'][i].replace(self.image_token, "<|placeholder|>" * num_image_tokens, 1)

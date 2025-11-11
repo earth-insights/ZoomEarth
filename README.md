@@ -94,9 +94,7 @@ After that, run `bash ./run_scripts/eval.sh` to get detailed evaluation result.
 ## 📬 Contact
 
 If you have questions or would like to collaborate, please contact us at:  
-📧 [`Lorem@ipsum.com`](Lorem@ipsum.com)
-
-📧 [`HappyBug@stu.xjtu.edu.cn`](HappyBug@stu.xjtu.edu.cn)
+📧 [`test123@example.com`](test123@example.com)
 
 <p align="center">
   <sub>© 2025 ZoomEarth Project. Released under the Apache 2.0 License.</sub>

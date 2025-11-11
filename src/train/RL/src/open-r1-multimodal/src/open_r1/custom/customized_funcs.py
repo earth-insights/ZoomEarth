@@ -41,17 +41,14 @@ def cut_image(image, bbox, min_size=512):
     width, height = x2 - x1, y2 - y1
 
     if width < min_size or height < min_size:
-        # 中心点
         center_x = (x1 + x2) // 2
         center_y = (y1 + y2) // 2
 
-        # 初步计算边界
         new_x1 = center_x - min_size // 2
         new_y1 = center_y - min_size // 2
         new_x2 = new_x1 + min_size
         new_y2 = new_y1 + min_size
 
-        # 平移使得裁剪框在图像内部
         if new_x1 < 0:
             new_x2 += -new_x1
             new_x1 = 0
@@ -65,7 +62,6 @@ def cut_image(image, bbox, min_size=512):
             new_y1 -= new_y2 - image.height
             new_y2 = image.height
 
-        # 最后确保框不越界
         new_x1 = max(0, new_x1)
         new_y1 = max(0, new_y1)
         new_x2 = min(image.width, new_x1 + min_size)
@@ -74,7 +70,6 @@ def cut_image(image, bbox, min_size=512):
         return image.crop((int(new_x1), int(new_y1), int(new_x2), int(new_y2)))
 
     else:
-        # 普通中心缩放逻辑
         cropped = image.crop((x1, y1, x2, y2))
         return cropped
 
@@ -131,14 +126,12 @@ def extract_tag(text: str, tag: str, default=None):
 def parse_bbox_text(s):
     if s is None:
         return None
-    # 优先 JSON
     try:
         arr = json.loads(s)
         if isinstance(arr, list) and len(arr) == 4:
             return [float(v) for v in arr]
     except Exception:
         pass
-    # 兜底：抓 4 个数
     nums = re.findall(r'-?\d+\.?\d*', s)
     if len(nums) >= 4:
         return [float(x) for x in nums[:4]]
@@ -153,17 +146,14 @@ def get_crop_area(bbox, min_size=512):
     width, height = x2 - x1, y2 - y1
 
     if width < min_size or height < min_size:
-        # 中心点
         center_x = (x1 + x2) // 2
         center_y = (y1 + y2) // 2
 
-        # 初步计算边界
         new_x1 = center_x - min_size // 2
         new_y1 = center_y - min_size // 2
         new_x2 = new_x1 + min_size
         new_y2 = new_y1 + min_size
 
-        # 最后确保框不越界
         new_x1 = max(0, new_x1)
         new_y1 = max(0, new_y1)
 

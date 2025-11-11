@@ -9,7 +9,6 @@ import math
 import requests
 from io import BytesIO
 import re
-# import torch.nn.functional as F
 import copy
 from collections import defaultdict
 Image.MAX_IMAGE_PIXELS = 10000000000

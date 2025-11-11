@@ -43,11 +43,9 @@ def cut_image(image, bbox, min_size=512):
     width, height = x2 - x1, y2 - y1
 
     if width < min_size or height < min_size:
-        # 中心点
         center_x = (x1 + x2) // 2
         center_y = (y1 + y2) // 2
 
-        # 初步计算边界
         new_x1 = center_x - min_size // 2
         new_y1 = center_y - min_size // 2
         new_x2 = new_x1 + min_size
