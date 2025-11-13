@@ -13,7 +13,6 @@
             color: #333;
             line-height: 1.6;
         }
-        /* 导航栏 */
         nav {
             position: fixed;
             width: 100%;
@@ -49,7 +48,6 @@
         .nav-links a:hover {
             color: #007acc;
         }
-        /* 汉堡菜单按钮 */
         .menu-toggle {
             display: none;
             flex-direction: column;
@@ -62,7 +60,6 @@
             background: #333;
             transition: all 0.3s;
         }
-        /* Hero 区 */
         .hero {
             background: linear-gradient(to right, #007acc, #00b4d8);
             color: white;
@@ -93,7 +90,6 @@
         .links .btn:hover {
             background: #f0f0f0;
         }
-        /* 图片区域 */
         .teaser img {
             display: block;
             margin: 40px auto;
@@ -101,7 +97,6 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
-        /* 内容区 */
         section {
             max-width: 900px;
             margin: auto;
@@ -112,7 +107,6 @@
             padding-bottom: 5px;
             margin-bottom: 20px;
         }
-        /* 视频自适应 */
         .video-container {
             position: relative;
             padding-bottom: 56.25%;
@@ -125,21 +119,18 @@
             width: 100%;
             height: 100%;
         }
-        /* BibTeX 区 */
         pre {
             background: #eee;
             padding: 15px;
             border-radius: 5px;
             overflow-x: auto;
         }
-        /* 页脚 */
         footer {
             text-align: center;
             padding: 20px;
             background: #f0f0f0;
             font-size: 14px;
         }
-        /* 响应式 */
         @media (max-width: 768px) {
             .nav-links {
                 position: absolute;
@@ -163,7 +154,6 @@
 </head>
 <body>
 
-<!-- 导航栏 -->
 <nav>
     <div class="nav-container">
         <a href="#home" class="logo">ZoomEarth</a>
@@ -180,7 +170,6 @@
     </div>
 </nav>
 
-<!-- Hero 区 -->
 <header id="home" class="hero">
     <h1>ZoomEarth</h1>
     <p class="subtitle">Paper Title Goes Here</p>
@@ -191,12 +180,10 @@
     </p>
 </header>
 
-<!-- 封面图 -->
 <section class="teaser">
     <img src="images/teaser.png" alt="Teaser Image">
 </section>
 
-<!-- Abstract -->
 <section id="abstract">
     <h2>Abstract</h2>
     <p>
@@ -204,7 +191,6 @@
     </p>
 </section>
 
-<!-- Video -->
 <section id="video">
     <h2>Video</h2>
     <div class="video-container">
@@ -212,7 +198,6 @@
     </div>
 </section>
 
-<!-- BibTeX -->
 <section id="bibtex">
     <h2>BibTeX</h2>
 <pre>
@@ -225,12 +210,10 @@
 </pre>
 </section>
 
-<!-- 页脚 -->
 <footer>
     <p>© 2025 Your Name</p>
 </footer>
 
-<!-- JS: 汉堡菜单功能 -->
 <script>
     const menuToggle = document.getElementById('menu-toggle');
     const navLinks = document.querySelector('.nav-links');

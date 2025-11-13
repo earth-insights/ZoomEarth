@@ -194,12 +194,12 @@ class Qwen2VLProcessor(ProcessorMixin):
         return_data = {**text_inputs, **image_inputs, **videos_inputs}
 
 
-        labels = np.array(text_inputs["input_ids"])  # 复制一份完整的Q+A
-        labels[:,:] = -100                          # 将所有位置的标签初始化为-100
-        labels_ = np.array(self.tokenizer(kwargs['text_pair'])['input_ids'])  # 复制一份A的标签
+        labels = np.array(text_inputs["input_ids"])
+        labels[:,:] = -100                         
+        labels_ = np.array(self.tokenizer(kwargs['text_pair'])['input_ids'])
         len_labels = labels_.shape[1]
-        labels[:,labels.shape[1]-len_labels:] = labels_      # 只保留A的标签
-        labels[labels == self.image_token_id] = -100         # 把A里的image_token_id也设置为-100
+        labels[:,labels.shape[1]-len_labels:] = labels_      
+        labels[labels == self.image_token_id] = -100        
         labels= labels.tolist()
 
         return_data.update({"labels": labels})
