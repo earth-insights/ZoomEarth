@@ -1,6 +1,6 @@
 <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    <img src="./icon.png" alt="ZoomEarth Icon" width="25" height="25" style="object-fit: contain; vertical-align: middle;"/>
+    <img src="./images/icon.png" alt="ZoomEarth Icon" width="25" height="25" style="object-fit: contain; vertical-align: middle;"/>
     ZoomEarth
   </h1>
   <p>A Vsion Language Model Designed For Tasks On Ultra-High-Resolution Remote Sensing Imagery</p>
