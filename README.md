@@ -8,32 +8,20 @@
 
 ## 🔥🔥🔥 ZoomEarth
 
-We released ZoomEarth 🤗 (...), a vision language model that is designed to solve visual reasoning and question answering tasks on **ultra-high-resolution remote sensing imagery** with active perception. Moreover, ZoomEarth can seamlessly integrate with downstream models for tasks such as cloud removal, denoising, segmentation, and image editing through simple tool interfaces, demonstrating strong extensibility.
-
-## 🚀 Overview
-
-**ZoomEarth** is a vision language model designed to solve visual reasoning and question answering tasks on **ultra-high-resolution remote sensing imagery**.  
+We released ZoomEarth🌍, a vision language model that is designed to solve visual reasoning and question answering tasks on **ultra-high-resolution remote sensing imagery** with active perception. Moreover, ZoomEarth can seamlessly integrate with downstream models for tasks such as cloud removal, denoising, segmentation, and image editing through simple tool interfaces, demonstrating strong extensibility.  
 
 ## 🎊 News and Updates
 
-- `2025.xx.xx` 🎉🎉🎉 ZoomEarth-3B is publicly available on huggingface🤗!
-- `2025.xx.xx` 🎉🎉🎉 LRS-GRO is publicly available on huggingface🤗!
-- `2025.xx.xx` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is now avilable on arXiv!
-
-## 🎥 Demo Video
-
-Watch our demo to see how **ZoomEarth** performs on complex multimodal reasoning tasks.
-🔥 For the best experience, please keep the audio on while enjoying the video.
-
-▶️ [Demo Video (YouTube)](#)  
-▶️ [Bilibili Mirror](#)
+- `2025.11.14` 🎉🎉🎉 ZoomEarth-3B is publicly available on [huggingface🤗](https://huggingface.co/HappyBug/ZoomEarth-3B)!
+- `2025.11.14` 🎉🎉🎉 LRS-GRO is publicly available on [huggingface🤗](https://huggingface.co/datasets/HappyBug/LRS-GRO)!
+- `2025.11.14` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is now avilable on [arXiv]()!
 
 ## 🧠 Model
 
 Our model, **ZoomEarth**, is built upon Qwen2.5-VL-3B, a powerful VLM that  
 It supports fine-grained reasoning, spatial context interpretation, and multi-level object understanding.
 
-- Model weights: *coming soon* 🤗  
+- Model weights: [ZoomEarth-3B 🤗](https://huggingface.co/HappyBug/ZoomEarth-3B)
 - Training scripts: [./src/train/](./src/train/)  
 - Evaluate scripts: [./src/eval/](./src/eval/)
 
@@ -51,7 +39,7 @@ It supports fine-grained reasoning, spatial context interpretation, and multi-le
 | Test| 308 | 3312 | 4000 |
 
 **Download:**  
-👉 [Google Drive](#) | [Hugging Face](#) | [OpenData Portal](#)
+[LRS-GRO 🤗](https://huggingface.co/datasets/HappyBug/LRS-GRO)
 
 ## ⚙️ Installation
 Step 1. Create a conda environment and activate it.
@@ -94,7 +82,9 @@ After that, run `bash ./run_scripts/eval.sh` to get detailed evaluation result.
 ## 📬 Contact
 
 If you have questions or would like to collaborate, please contact us at:  
-📧 [`test123@example.com`](test123@example.com)
+📧 [`liuruixun6343@gmail.com`](liuruixun6343@gmail.com)
+
+📧 [`HappyBug@stu.xjtu.edu.cn`](HappyBug@stu.xjtu.edu.cn)
 
 <p align="center">
   <sub>© 2025 ZoomEarth Project. Released under the Apache 2.0 License.</sub>
