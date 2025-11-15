@@ -4,153 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZoomEarth: Paper Title</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #fafafa;
-            color: #333;
-            line-height: 1.6;
-        }
-        nav {
-            position: fixed;
-            width: 100%;
-            background: #ffffffcc;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 100;
-        }
-        .nav-container {
-            max-width: 1100px;
-            margin: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-        }
-        .logo {
-            font-weight: bold;
-            font-size: 20px;
-            color: #007acc;
-            text-decoration: none;
-        }
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover {
-            color: #007acc;
-        }
-        .menu-toggle {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 4px;
-        }
-        .menu-toggle span {
-            width: 25px;
-            height: 3px;
-            background: #333;
-            transition: all 0.3s;
-        }
-        .hero {
-            background: linear-gradient(to right, #007acc, #00b4d8);
-            color: white;
-            padding: 100px 20px;
-            text-align: center;
-        }
-        .hero h1 {
-            margin: 0;
-            font-size: 48px;
-        }
-        .subtitle {
-            font-size: 20px;
-            margin-top: 10px;
-        }
-        .authors {
-            margin-top: 10px;
-        }
-        .links .btn {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            background: white;
-            color: #007acc;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
-        }
-        .links .btn:hover {
-            background: #f0f0f0;
-        }
-        .teaser img {
-            display: block;
-            margin: 40px auto;
-            max-width: 90%;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        section {
-            max-width: 900px;
-            margin: auto;
-            padding: 40px 20px;
-        }
-        h2 {
-            border-bottom: 2px solid #007acc;
-            padding-bottom: 5px;
-            margin-bottom: 20px;
-        }
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        pre {
-            background: #eee;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #f0f0f0;
-            font-size: 14px;
-        }
-        @media (max-width: 768px) {
-            .nav-links {
-                position: absolute;
-                top: 60px;
-                right: 20px;
-                background: white;
-                flex-direction: column;
-                gap: 10px;
-                padding: 10px;
-                display: none;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .menu-toggle {
-                display: flex;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -172,16 +26,44 @@
 
 <header id="home" class="hero">
     <h1>ZoomEarth</h1>
-    <p class="subtitle">Paper Title Goes Here</p>
-    <p class="authors"><strong>Author1</strong>, Author2, Author3</p>
+    <p class="subtitle">Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks</p>
+    <p style="font-family:sans-serif; font-size:16px; line-height:1.4;">
+        Ruixun Liu<sup>1*</sup>, Bowen Fu<sup>1*</sup>, Jiayi Song<sup>1</sup>,
+        Kaiyu Li<sup>1</sup>, Wanchen Li<sup>1</sup>, Lanxuan Xue<sup>1</sup>,<br>
+        Hui Qiao<sup>2</sup>, Weizhan Zhang<sup>1</sup>, Deyu Meng<sup>1</sup>,
+        Xiangyong Cao<sup>1†</sup>
+    </p>
+    <p style="font-family:sans-serif; font-size:14px; color:#ffffff; margin-top:6px;">
+        <sup>1</sup>Xi'an Jiaotong University &nbsp; <sup>2</sup>China Telecom Shaanxi Branch<br>
+        <small>* These authors contributed equally. &nbsp; † Corresponding author.</small>
+    </p>
+
     <p class="links">
-        <a href="https://arxiv.org/abs/xxxx.xxxxx" class="btn">Paper</a>
-        <a href="https://github.com" class="btn">Code</a>
+        <a href="https://arxiv.org/abs/xxxx.xxxxx" class="btn">
+            <img src="./images/arxiv-logomark-small.svg" alt="icon" width="15">
+            <span style="margin: 5px;">Paper</span>
+        </a>
+        <a href="https://github.com" class="btn">
+            <img src="./images/github-mark.svg" alt="icon" width="20">
+            <span style="margin: 5px;">Code</span>
+        </a>
+        <a href="https://github.com" class="btn">
+            <img src="./images/hf-logo.svg" alt="icon" width="25">
+            <span>Model</span>        
+        </a>
+        <a href="https://github.com" class="btn">
+            <img src="./images/hf-logo.svg" alt="icon" width="25">
+            <span>Dataset</span>
+        </a>
     </p>
 </header>
 
+<section class="sec">
+    <span class="Overview">Overview</span>
+</section>
+
 <section class="teaser">
-    <img src="images/teaser.png" alt="Teaser Image">
+    <img src="images/teaser.jpg" alt="Teaser Image">
 </section>
 
 <section id="abstract">
@@ -189,6 +71,18 @@
     <p>
         This is where your abstract goes. Briefly describe your work, the problem you solve, and your main contributions.
     </p>
+</section>
+
+<section class="sec">
+    <img src="images/flowchart-1.jpg" alt="Flowchart Image">
+</section>
+
+<section class="sec">
+    <img src="images/data_pipelien-1.jpg" alt="Data Pipelien Image">
+</section>
+
+<section class="sec">
+    <img src="images/downstream-1.jpg" alt="Downstream Image">
 </section>
 
 <section id="video">
@@ -222,6 +116,19 @@
         navLinks.classList.toggle('active');
     });
 </script>
+
+<script>
+    const nav = document.querySelector("nav");
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 520) {
+            nav.classList.add("scrolled");
+        } else {
+            nav.classList.remove("scrolled");
+        }
+    });
+</script>
+
 
 </body>
 </html>

@@ -40,3 +40,233 @@ pre {
     padding: 10px;
     overflow-x: auto;
 }
+
+body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    color: #333;
+    line-height: 1.6;
+}
+nav {
+    position: fixed;
+    width: 100%;
+    background: #ffffff19;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 100;
+}
+.nav-container {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+.logo {
+    font-weight: bold;
+    font-size: 20px;
+    color: #ffffff;
+    text-decoration: none;
+}
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+.nav-links a {
+    text-decoration: none;
+    color: #ffffff;
+    transition: color 0.3s;
+}
+.nav-links a:hover {
+    color: #007acc;
+}
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    transition: all 0.3s;
+}
+.hero {
+    background: linear-gradient(to right, #007acc, #00b4d8);
+    color: white;
+    padding: 100px 20px;
+    text-align: center;
+}
+.hero h1 {
+    margin: 0;
+    font-size: 48px;
+}
+.subtitle {
+    font-size: 20px;
+    margin-top: 10px;
+}
+.authors {
+    margin-top: 10px;
+}
+
+.links {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.links .btn {
+    margin: 10px;
+    background: rgba(255, 255, 255, 0.433);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.btn {
+    width: 90px;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.links .btn:hover {
+    background: #e8f2ff;
+}
+.teaser img {
+    display: block;
+    margin: 40px auto;
+    max-width: 90%;
+    border-radius: 8px;
+    /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
+}
+section {
+    max-width: 900px;
+    margin: auto;
+    padding: 40px 20px;
+}
+h2 {
+    border-bottom: 2px solid #007acc;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+pre {
+    background: #eee;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #f0f0f0;
+    font-size: 14px;
+}
+@media (max-width: 768px) {
+    .nav-links {
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: white;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+        display: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .nav-links.active {
+        display: flex;
+    }
+    .menu-toggle {
+        display: flex;
+    }
+}
+
+.sec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.sec > img {
+    display: block;
+    max-width: 90%;
+}
+
+/* ------------------------------ */
+/*   Header background slideshow  */
+/* ------------------------------ */
+
+.hero {
+    position: relative;
+    height: 380px; /* 根据需要调节 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: bgSlide 18s infinite;
+}
+
+/* 三张背景图轮换 */
+@keyframes bgSlide {
+    0%   { background-image: url("images/bg1.png"); }
+    33%  { background-image: url("images/bg2.png"); }
+    66%  { background-image: url("images/bg3.png"); }
+    100% { background-image: url("images/bg1.png"); }
+}
+
+/* 给标题增加一点描边，防止背景过亮影响可读性 */
+.hero h1,
+.hero .subtitle,
+.hero p {
+    text-shadow: 0 0 8px rgba(0,0,0,0.55);
+}
+
+
+/* ------------------------- */
+/* Nav style when scrolled   */
+/* ------------------------- */
+nav.scrolled {
+    background: #ffffffee; /* 不透明白色 */
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+nav.scrolled .logo {
+    color: #222;
+}
+
+nav.scrolled .nav-links a {
+    color: #222;
+}
+
+nav.scrolled .nav-links a:hover {
+    color: #007acc;
+}
+
+/* menu icon also change */
+nav.scrolled .menu-toggle span {
+    background: #222;
+}
