@@ -34,9 +34,9 @@ It supports fine-grained reasoning, spatial context interpretation, and multi-le
 
 | Split | #Images | #Questions | Avg. Resolution |
 |:------|---------:|------------:|----------------:|
-| SFT | 291 | 3311 | 4000 |
-| RL  | 625 | 6622 | 4000 |
-| Test| 308 | 3312 | 4000 |
+| SFT | 0 | 0 | 5000 |
+| RL  | 0 | 0 | 5000 |
+| Test| 0 | 0 | 5000 |
 
 **Download:**  
 [LRS-GRO 🤗](https://huggingface.co/datasets/HappyBug/LRS-GRO)
@@ -69,6 +69,12 @@ nltk.data.path.insert(0, local_corpora)
 from nltk.corpus import wordnet as wn
 ```
 and then replace `local_corpora` with actual path in [`src/eval/eval.py`](src/eval/eval.py), [`src/train/RL/src/open-r1-multimodal/src/open_r1/custom/customized_funcs.py`](src/train/RL/src/open-r1-multimodal/src/open_r1/custom/customized_funcs.py)
+## 📋 Quick start
+```python
+
+
+```
+
 
 ## 🚂 Train
 To train ZoomEarth, first run `bash ./run_scripts/train_sft.sh` to start SFT training phase.
