@@ -13,7 +13,8 @@
         <a href="#home" class="logo">ZoomEarth</a>
         <ul class="nav-links">
             <li><a href="#abstract">Abstract</a></li>
-            <li><a href="#video">Video</a></li>
+            <!-- <li><a href="#video">Video</a></li> -->
+            <li><a href="#experiment">Experiment</a></li>
             <li><a href="#bibtex">BibTeX</a></li>
         </ul>
         <div class="menu-toggle" id="menu-toggle">
@@ -58,22 +59,18 @@
     </p>
 </header>
 
-<section class="sec">
-    <span class="Overview">Overview</span>
-</section>
-
 <section class="teaser">
     <img src="images/teaser.jpg" alt="Teaser Image">
 </section>
 
 <section id="abstract">
     <h2>Abstract</h2>
-    <p>
-        This is where your abstract goes. Briefly describe your work, the problem you solve, and your main contributions.
+    <p style="font-style: italic;">
+        Ultra-high-resolution (UHR) remote sensing (RS) images offer rich fine-grained information but also present challenges in effective processing. Existing dynamic resolution and token pruning methods are constrained by a passive perception paradigm, suffering from increased redundancy when obtaining finer visual inputs. In this work, we explore a new active perception paradigm that enables models to revisit information-rich regions. First, we present LRS-GRO, a large-scale benchmark dataset tailored for active perception in UHR RS processing, encompassing 17 question types across global, region, and object levels, annotated via a semi-automatic pipeline. Building on LRS-GRO, we propose ZoomEarth, an adaptive cropping–zooming framework with a novel Region-Guided reward that provides fine-grained guidance. Trained via supervised fine-tuning (SFT) and Group Relative Policy Optimization (GRPO), ZoomEarth achieves state-of-the-art performance on LRS-GRO and, in the zero-shot setting, on three public UHR remote sensing benchmarks. Furthermore, ZoomEarth can be seamlessly integrated with downstream models for tasks  such as cloud removal, denoising, segmentation, and image editing through simple tool interfaces, demonstrating strong versatility and extensibility.
     </p>
 </section>
 
-<section class="sec">
+<section id="framework" class="sec">
     <img src="images/flowchart-1.jpg" alt="Flowchart Image">
 </section>
 
@@ -85,12 +82,18 @@
     <img src="images/downstream-1.jpg" alt="Downstream Image">
 </section>
 
-<section id="video">
+<section id="experiment" class="sec">
+    <h2>Experiment</h2>
+    <img src="images/exp-1.png" alt="Experiment 1">
+    <img src="images/exp-2.png" alt="Experiment 2">
+</section>
+
+<!-- <section id="video">
     <h2>Video</h2>
     <div class="video-container">
         <iframe src="https://www.youtube.com/embed/XXXXXXX" frameborder="0" allowfullscreen></iframe>
     </div>
-</section>
+</section> -->
 
 <section id="bibtex">
     <h2>BibTeX</h2>
@@ -105,7 +108,7 @@
 </section>
 
 <footer>
-    <p>© 2025 Your Name</p>
+    <p>© 2025 ZoomEarth</p>
 </footer>
 
 <script>

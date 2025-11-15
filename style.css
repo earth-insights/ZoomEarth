@@ -204,14 +204,8 @@ footer {
     }
 }
 
-.sec {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 .sec > img {
+    margin: auto;
     display: block;
     max-width: 90%;
 }
@@ -231,10 +225,10 @@ footer {
 
 /* 三张背景图轮换 */
 @keyframes bgSlide {
-    0%   { background-image: url("images/bg1.png"); }
-    33%  { background-image: url("images/bg2.png"); }
-    66%  { background-image: url("images/bg3.png"); }
-    100% { background-image: url("images/bg1.png"); }
+    0%   { background-image: url("images/demo1.png"); }
+    33%  { background-image: url("images/demo2.png"); }
+    67%  { background-image: url("images/demo3.png"); }
+    100% { background-image: url("images/demo1.png"); }
 }
 
 /* 给标题增加一点描边，防止背景过亮影响可读性 */
