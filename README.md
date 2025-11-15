@@ -34,9 +34,9 @@ It supports fine-grained reasoning, spatial context interpretation, and multi-le
 
 | Split | #Images | #Questions | Avg. Resolution |
 |:------|---------:|------------:|----------------:|
-| SFT | 0 | 1011 | 5000 |
-| RL  | 0 | 2500 | 5000 |
-| Test| 0 | 9734 | 5000 |
+| SFT | 88 | 1011 | 5000 |
+| RL  | 228 | 2500 | 5000 |
+| Test| 908 | 9734 | 5000 |
 
 **Download:**  
 [LRS-GRO 🤗](https://huggingface.co/datasets/HappyBug/LRS-GRO)
