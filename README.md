@@ -4,7 +4,6 @@
     ZoomEarth
   </h1>
   <p>A Vsion Language Model Designed For Tasks On Ultra-High-Resolution Remote Sensing Imagery</p>
-<
 
 ## 🔥🔥🔥 ZoomEarth
 
