@@ -74,7 +74,7 @@ nltk.data.path.insert(0, local_corpora)
 from nltk.corpus import wordnet as wn
 ```
 and then replace `local_corpora` with actual path in [`src/eval/eval.py`](src/eval/eval.py), [`src/train/RL/src/open-r1-multimodal/src/open_r1/custom/customized_funcs.py`](src/train/RL/src/open-r1-multimodal/src/open_r1/custom/customized_funcs.py)
-## 📋 Quick start
+## 🚀 Quick start
 ```python
 python src/demo.py
 ```
