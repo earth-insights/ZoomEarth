@@ -1,9 +1,14 @@
 <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    <img src="./images/icon.png" alt="ZoomEarth Icon" width="25" height="25" style="object-fit: contain; vertical-align: middle;"/>
-    ZoomEarth
+    ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks
   </h1>
-  <p>A Vsion Language Model Designed For Tasks On Ultra-High-Resolution Remote Sensing Imagery</p>
+  <p>
+  •
+  <a href="https://earth-insights.github.io/ZoomEarth/">[Project]</a>
+  •
+  <a href="https://earth-insights.github.io/ZoomEarth/">[arXiv]</a>
+  •
+  </p>
 </div>
 
 ## 🔥🔥🔥 ZoomEarth
@@ -71,32 +76,7 @@ from nltk.corpus import wordnet as wn
 and then replace `local_corpora` with actual path in [`src/eval/eval.py`](src/eval/eval.py), [`src/train/RL/src/open-r1-multimodal/src/open_r1/custom/customized_funcs.py`](src/train/RL/src/open-r1-multimodal/src/open_r1/custom/customized_funcs.py)
 ## 📋 Quick start
 ```python
-from transformers import AutoTokenizer, AutoModelForCausalLM
-MODEL_PATH = ""
-INSTRUCTION = "You are..." # copy from sft.py
-tokenizer = AutoTokenizer.from_pretrained("MODEL_PATH")
-model = AutoModelForCausalLM.from_pretrained("MODEL_PATH")
-
-prompt = "Are there any building on the top-right island?"
-
-messages = [
-{
-  "role": "user",
-  "content": [
-    {"type": "image"},
-    {"type": "text", "text": prompt + INSTRUCTION},
-  ],
-},
-]
-inputs = tokenizer.apply_chat_template(
-	messages,
-	add_generation_prompt=True,
-	tokenize=True,
-	return_dict=True,
-	return_tensors="pt",
-).to(model.device)
-outputs = model.generate(**inputs, max_new_tokens=40)
-print(tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:]))
+python src/demo.py
 ```
 
 
