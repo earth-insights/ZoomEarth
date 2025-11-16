@@ -17,9 +17,9 @@ We released ZoomEarth🌍, a vision language model that is designed to solve vis
 
 ## 🎊 News and Updates
 
+- `2025.11.16` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is now avilable on [arXiv]()!
 - `2025.11.15` 🎉🎉🎉 ZoomEarth-3B is publicly available on [huggingface🤗](https://huggingface.co/HappyBug/ZoomEarth-3B)!
 - `2025.11.15` 🎉🎉🎉 LRS-GRO is publicly available on [huggingface🤗](https://huggingface.co/datasets/HappyBug/LRS-GRO)!
-- `2025.11.15` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is now avilable on [arXiv]()!
 
 ## 🧠 Model
 
@@ -27,8 +27,8 @@ Our model, **ZoomEarth**, is built upon Qwen2.5-VL-3B, a powerful VLM that
 It supports fine-grained reasoning, spatial context interpretation, and multi-level object understanding.
 
 - Model weights: [ZoomEarth-3B 🤗](https://huggingface.co/HappyBug/ZoomEarth-3B)
-- Training scripts: [./src/train/](./src/train/)  
-- Evaluate scripts: [./src/eval/](./src/eval/)
+- Training scripts: [src/train/](./src/train/)  
+- Evaluate scripts: [src/eval/](./src/eval/)
 
 ## 🛰️ Dataset
 
