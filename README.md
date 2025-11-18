@@ -21,6 +21,10 @@ We released ZoomEarth🌍, a vision language model that is designed to solve vis
 - `2025.11.15` 🎉🎉🎉 ZoomEarth-3B is publicly available on [huggingface🤗](https://huggingface.co/HappyBug/ZoomEarth-3B)!
 - `2025.11.15` 🎉🎉🎉 LRS-GRO is publicly available on [huggingface🤗](https://huggingface.co/datasets/HappyBug/LRS-GRO)!
 
+## 🎞️ Demo Video
+
+[https://github.com/user-attachments/assets/a49f6811-b166-4431-9397-31ca6e93b855](https://github.com/user-attachments/assets/a49f6811-b166-4431-9397-31ca6e93b855)
+
 ## 🧠 Model
 
 Our model, **ZoomEarth**, is built upon Qwen2.5-VL-3B, a powerful VLM that  
@@ -95,6 +99,22 @@ If you have questions or would like to collaborate, please contact us at:
 📧 [`liuruixun6343@gmail.com`](liuruixun6343@gmail.com)
 
 📧 [`HappyBug@stu.xjtu.edu.cn`](HappyBug@stu.xjtu.edu.cn)
+
+## Citation
+
+If you found our work usful, welcome to cite us:
+```
+@misc{liu2025zoomearthactiveperceptionultrahighresolution,
+  title={ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks},
+  author={Ruixun Liu and Bowen Fu and Jiayi Song and Kaiyu Li and Wanchen Li and Lanxuan Xue and Hui Qiao and Weizhan Zhang and Deyu Meng and Xiangyong Cao},
+  year={2025},
+  eprint={2511.12267},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2511.12267},
+}
+```
+
 
 <p align="center">
   <sub>© 2025 ZoomEarth Project. Released under the Apache 2.0 License.</sub>
