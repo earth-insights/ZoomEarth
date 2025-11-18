@@ -23,7 +23,7 @@ We released ZoomEarth🌍, a vision language model that is designed to solve vis
 
 ## 🎞️ Demo Video
 
-[https://github.com/user-attachments/assets/a49f6811-b166-4431-9397-31ca6e93b855](https://github.com/user-attachments/assets/a49f6811-b166-4431-9397-31ca6e93b855)
+[https://github.com/user-attachments/assets/429a5ca9-6778-4e53-b4bf-dea32310c5e3](https://github.com/user-attachments/assets/429a5ca9-6778-4e53-b4bf-dea32310c5e3)
 
 ## 🧠 Model
 

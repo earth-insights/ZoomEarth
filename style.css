@@ -210,6 +210,13 @@ footer {
     max-width: 90%;
 }
 
+.sec > video {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+}
+
+
 /* ------------------------------ */
 /*   Header background slideshow  */
 /* ------------------------------ */
