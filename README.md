@@ -6,7 +6,7 @@
   •
   <a href="https://earth-insights.github.io/ZoomEarth/">[Project]</a>
   •
-  <a href="https://earth-insights.github.io/ZoomEarth/">[arXiv]</a>
+  <a href="https://arxiv.org/abs/2511.12267">[arXiv]</a>
   •
   </p>
 </div>
