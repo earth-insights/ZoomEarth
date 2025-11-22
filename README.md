@@ -17,7 +17,8 @@ We released ZoomEarth🌍, a vision language model that is designed to solve vis
 
 ## 🎊 News and Updates
 
-- `2025.11.18` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is now avilable on [arXiv]()!
+- `2025.11.22` 🎉🎉🎉 We release the code that support faster inference with vLLM!
+- `2025.11.18` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is now avilable on [arXiv](https://arxiv.org/abs/2511.12267)!
 - `2025.11.15` 🎉🎉🎉 ZoomEarth-3B is publicly available on [huggingface🤗](https://huggingface.co/HappyBug/ZoomEarth-3B)!
 - `2025.11.15` 🎉🎉🎉 LRS-GRO is publicly available on [huggingface🤗](https://huggingface.co/datasets/HappyBug/LRS-GRO)!
 
@@ -93,6 +94,25 @@ After that, run `bash ./run_scripts/train_rl.sh` to start RL training phase.
 To evaluate model on LRS-GRO, first run `bash ./run_scripts/infer.sh` to generate inference file.
 
 After that, run `bash ./run_scripts/eval.sh` to get detailed evaluation result.
+
+Or infer with vLLM:
+
+First install vLLM to your environment:
+```
+pip install torch --index-url https://download.pytorch.org/whl/cu121
+
+pip install "vllm[cuda]"
+```
+And then start vLLM serve by:
+```
+VLLM_USE_MODELSCOPE=true vllm serve \
+PATH_TO_ZOOM_EARTH_MODEL \
+--served-model-name ZoomEarth \
+--max_model_len 2048 \
+--host 0.0.0.0 \
+--port 8000
+```
+Finally run `python ./src/eval/infer_vllm.py --exp_name zoomearth-infer`, and after infer you will find your result in `result/zoomearth-infer.jsonl`
 ## 📬 Contact
 
 If you have questions or would like to collaborate, please contact us at:  
