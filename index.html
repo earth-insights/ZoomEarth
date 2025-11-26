@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZoomEarth</title>
+    <link rel="stylesheet" href="style.css">
+    <head>
+        <link rel="icon" href="./images/icon.png" type="image/png">
+    </head>
+
+</head>
+<body>
+
+<nav>
+    <div class="nav-container">
+        <a href="#home" class="logo">ZoomEarth</a>
+        <ul class="nav-links">
+            <li><a href="#abstract">Abstract</a></li>
+            <li><a href="#video">Video</a></li>
+            <li><a href="#experiment">Experiment</a></li>
+            <li><a href="#bibtex">BibTeX</a></li>
+        </ul>
+        <div class="menu-toggle" id="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</nav>
+
+<header id="home" class="hero">
+    <h1>ZoomEarth</h1>
+    <p class="subtitle">Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks</p>
+    <p style="font-family:sans-serif; font-size:16px; line-height:1.4;">
+        Ruixun Liu<sup>1*</sup>, Bowen Fu<sup>1*</sup>, Jiayi Song<sup>1</sup>,
+        Kaiyu Li<sup>1</sup>, Wanchen Li<sup>1</sup>, Lanxuan Xue<sup>1</sup>,<br>
+        Hui Qiao<sup>2</sup>, Weizhan Zhang<sup>1</sup>, Deyu Meng<sup>1</sup>,
+        Xiangyong Cao<sup>1†</sup>
+    </p>
+    <p style="font-family:sans-serif; font-size:14px; color:#ffffff; margin-top:6px;">
+        <sup>1</sup>Xi'an Jiaotong University &nbsp; <sup>2</sup>China Telecom Shaanxi Branch<br>
+        <small>* Equal contribution. &nbsp; † Corresponding author.</small>
+    </p>
+
+    <p class="links">
+        <a href="https://arxiv.org/abs/2511.12267" class="btn">
+            <img src="./images/arxiv-logomark-small.svg" alt="icon" width="15">
+            <span style="margin: 5px;">Paper</span>
+        </a>
+        <a href="https://github.com/earth-insights/ZoomEarth" class="btn">
+            <img src="./images/github-mark.svg" alt="icon" width="20">
+            <span style="margin: 5px;">Code</span>
+        </a>
+        <a href="https://huggingface.co/HappyBug/ZoomEarth-3B" class="btn">
+            <img src="./images/hf-logo.svg" alt="icon" width="25">
+            <span>Model</span>        
+        </a>
+        <a href="https://huggingface.co/datasets/HappyBug/LRS-GRO" class="btn">
+            <img src="./images/hf-logo.svg" alt="icon" width="25">
+            <span>Dataset</span>
+        </a>
+    </p>
+</header>
+
+<section class="teaser">
+    <img src="images/teaser.jpg" alt="Teaser Image">
+</section>
+
+<section id="video" class="sec">
+    <h2>Demo Video</h2>
+    <video src="https://github.com/user-attachments/assets/429a5ca9-6778-4e53-b4bf-dea32310c5e3" controls></video>
+</section>
+
+<section id="abstract">
+    <h2>Abstract</h2>
+    <p style="font-style: italic;">
+        Ultra-high-resolution (UHR) remote sensing (RS) images offer rich fine-grained information but also present challenges in effective processing. Existing dynamic resolution and token pruning methods are constrained by a passive perception paradigm, suffering from increased redundancy when obtaining finer visual inputs. In this work, we explore a new active perception paradigm that enables models to revisit information-rich regions. First, we present LRS-GRO, a large-scale benchmark dataset tailored for active perception in UHR RS processing, encompassing 17 question types across global, region, and object levels, annotated via a semi-automatic pipeline. Building on LRS-GRO, we propose ZoomEarth, an adaptive cropping–zooming framework with a novel Region-Guided reward that provides fine-grained guidance. Trained via supervised fine-tuning (SFT) and Group Relative Policy Optimization (GRPO), ZoomEarth achieves state-of-the-art performance on LRS-GRO and, in the zero-shot setting, on three public UHR remote sensing benchmarks. Furthermore, ZoomEarth can be seamlessly integrated with downstream models for tasks  such as cloud removal, denoising, segmentation, and image editing through simple tool interfaces, demonstrating strong versatility and extensibility.
+    </p>
+</section>
+
+<section id="framework" class="sec">
+    <img src="images/flowchart-1.jpg" alt="Flowchart Image">
+</section>
+
+<section class="sec">
+    <img src="images/data_pipelien-1.jpg" alt="Data Pipelien Image">
+</section>
+
+<section class="sec">
+    <img src="images/downstream-1.jpg" alt="Downstream Image">
+</section>
+
+<section id="experiment" class="sec">
+    <h2>Experiment</h2>
+    <img src="images/exp-1.png" alt="Experiment 1">
+    <img src="images/exp-2.png" alt="Experiment 2">
+</section>
+
+<!-- <section id="video">
+    <h2>Video</h2>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/XXXXXXX" frameborder="0" allowfullscreen></iframe>
+    </div>
+</section> -->
+
+<section id="bibtex">
+    <h2>BibTeX</h2>
+<pre>
+@misc{liu2025zoomearthactiveperceptionultrahighresolution,
+    title={ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks}, 
+    author={Ruixun Liu and Bowen Fu and Jiayi Song and Kaiyu Li and Wanchen Li and Lanxuan Xue and Hui Qiao and Weizhan Zhang and Deyu Meng and Xiangyong Cao},
+    year={2025},
+    eprint={2511.12267},
+    archivePrefix={arXiv},
+    primaryClass={cs.CV},
+    url={https://arxiv.org/abs/2511.12267}, 
+}
+</pre>
+</section>
+
+<footer>
+    <p>© 2025 ZoomEarth</p>
+</footer>
+
+<script>
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+    });
+</script>
+
+<script>
+    const nav = document.querySelector("nav");
+
+    window.addEventListener("scroll", () => {
+        if (window.scrollY > 520) {
+            nav.classList.add("scrolled");
+        } else {
+            nav.classList.remove("scrolled");
+        }
+    });
+</script>
+
+
+</body>
+</html>
