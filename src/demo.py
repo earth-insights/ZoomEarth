@@ -1,4 +1,4 @@
-from transformers import Qwen2_5_VLProcessor, AutoModelForCausalLM
+from transformers import Qwen2_5_VLForConditionalGeneration, Qwen2_5_VLProcessor
 from PIL import Image
 import re
 import torch
@@ -76,7 +76,7 @@ def extract_bbox(completion_content: str, scale):
     bboxes = []
     for m in matches:
         try:
-            nums = [int(x.strip()) for x in m.split(",")]
+            nums = [float(x.strip()) for x in m.split(",")]
             bbox = [num * scale for num in nums]
             bboxes.append(bbox)
         except ValueError:
@@ -123,11 +123,11 @@ Rules:
 <|im_end|><|im_start|>assistant
 """
 
-def chat(prompt, image_fp):
+def chat(prompt, image_fp, device):
     processor = Qwen2_5_VLProcessor.from_pretrained(MODEL_PATH)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_PATH)
+    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(MODEL_PATH).to(device)
 
-    prompts = [prompt + INSTRUCTION]
+    prompts = [PREFIX + prompt + INSTRUCTION]
     image = Image.open(image_fp).convert("RGB")
     scale = max(1, max(image.width, image.height)/1024)
     images = [resize_image(image)]
@@ -139,16 +139,14 @@ def chat(prompt, image_fp):
         image_bbox = Image.open(image_fp).convert("RGB")
         image_bbox = resize_image(cut_image(image_bbox, bbox))
         images.append(image_bbox)
-        new_prompt = prompt + INSTRUCTION + output1.split("<answer>")[0] + "<|vision_start|><|image_pad|><|vision_end|>"
+        new_prompt = PREFIX + prompt + INSTRUCTION + output1.split("<answer>")[0] + "<|vision_start|><|image_pad|><|vision_end|>"
         output2 = chat_batch([new_prompt], images, processor, model)[0]
-        return output2
+        return output1.split("<answer>")[0] + output2
     else:
         return output1
 
 if __name__ == "__main__":
     prompt = "Are there any building on the top-right island?"
     image_fp = "./images/demo3.png"
-    output = chat(prompt=prompt, image_fp=image_fp)
+    output = chat(prompt=prompt, image_fp=image_fp, device="cuda")
     print(output)
-    
-    
