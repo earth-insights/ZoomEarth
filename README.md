@@ -108,6 +108,11 @@ PATH_TO_ZOOM_EARTH_MODEL \
 --port 8000
 ```
 Finally run `python ./src/eval/infer_vllm.py --exp_name zoomearth-infer`, and after infer you will find your result in `result/zoomearth-infer.jsonl`
+
+## ❤ Acknowledgments
+Thanks to the images from [FAIR1M](https://arxiv.org/abs/2103.05569), [GLH-Bridge](https://huggingface.co/datasets/ll-13/GLH-Bridge/tree/main) and [STAR](https://huggingface.co/datasets/Zhuzi24/STAR/tree/main), the benchmarks: [LRS-VQA](https://github.com/VisionXLab/LRS-VQA?tab=readme-ov-file), [MME-RealWorld](https://huggingface.co/datasets/yifanzhang114/MME-RealWorld), [XLRS-Bench](https://huggingface.co/datasets/initiacms/XLRS-Bench/tree/main) and [GeoLLaVA-8K](https://github.com/MiliLab/GeoLLaVA-8K) and the [VLM-R1](https://github.com/om-ai-lab/VLM-R1) training framework code.
+
+
 ## 📬 Contact
 
 If you have questions or would like to collaborate, please contact us at:  
@@ -129,7 +134,6 @@ If you found our work usful, welcome to cite us:
   url={https://arxiv.org/abs/2511.12267},
 }
 ```
-
 
 <p align="center">
   <sub>© 2025 ZoomEarth Project. Released under the Apache 2.0 License.</sub>
