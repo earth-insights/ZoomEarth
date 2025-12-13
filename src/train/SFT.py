@@ -115,14 +115,7 @@ def cut_image(image, bbox, min_size=512):
 
     else:
         cropped = image.crop((x1, y1, x2, y2))
-        w, h = cropped.size
-        scale = min_size / min(w, h)
-        new_w, new_h = int(w * scale), int(h * scale)
-        resized = cropped.resize((new_w, new_h), Image.BICUBIC)
-
-        left = (new_w - min_size) // 2
-        top = (new_h - min_size) // 2
-        return resized.crop((left, top, left + min_size, top + min_size))
+        return cropped
 
 def process_stage_1_reasoning(stage_1_reasoning, bbox, label):
     splited = stage_1_reasoning.split("json")
