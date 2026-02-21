@@ -1,6 +1,6 @@
 <div align="center">
   <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-    ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks (🎉🎉CVPR 2026🎉🎉)
+    ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks (🎉CVPR 2026🎉)
   </h1>
   <p>
   •
