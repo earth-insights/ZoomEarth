@@ -17,7 +17,7 @@ We released ZoomEarth🌍, a vision language model that is designed to solve vis
 
 ## 🎊 News and Updates
 
-- `2026.2.21` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is accepted to CVPR 2026
+- `2026.2.21` 🎉🎉🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is accepted by CVPR 2026
 - `2025.11.22` 🎉 We release the code that supports faster inference with vLLM!
 - `2025.11.18` 🎉 ***ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks*** is now avilable on [arXiv](https://arxiv.org/abs/2511.12267)!
 - `2025.11.15` 🎉 ZoomEarth-3B is publicly available on [huggingface🤗](https://huggingface.co/HappyBug/ZoomEarth-3B)!
