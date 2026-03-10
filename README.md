@@ -121,14 +121,11 @@ If you have questions or would like to collaborate, please contact us at:
 
 If you found our work usful, welcome to cite us:
 ```
-@misc{liu2025zoomearthactiveperceptionultrahighresolution,
-  title={ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks},
-  author={Ruixun Liu and Bowen Fu and Jiayi Song and Kaiyu Li and Wanchen Li and Lanxuan Xue and Hui Qiao and Weizhan Zhang and Deyu Meng and Xiangyong Cao},
-  year={2025},
-  eprint={2511.12267},
-  archivePrefix={arXiv},
-  primaryClass={cs.CV},
-  url={https://arxiv.org/abs/2511.12267},
+@article{liu2025zoomearth,
+  title={ZoomEarth: Active Perception for Ultra-High-Resolution Geospatial Vision-Language Tasks},
+  author={Liu, Ruixun and Fu, Bowen and Song, Jiayi and Li, Kaiyu and Li, Wanchen and Xue, Lanxuan and Qiao, Hui and Zhang, Weizhan and Meng, Deyu and Cao, Xiangyong},
+  journal={arXiv preprint arXiv:2511.12267},
+  year={2025}
 }
 ```
 
